@@ -113,10 +113,14 @@ def create_snapshots(project):
     "Create EC2 snapshots"
     instances = filter_instances(project)
     for i in instances:
+        i.stop()
+        i.wait_until_stopped()
         for v in i.volumes.all():
             print('Creating snapshot of {0}'.format(v.id))
             v.create_snapshot(Description='Create by SnapshotDemo')
-        return
+        i.start()
+        i.wait_until_running()
+    return
 
 if __name__ == '__main__':
     cli()
